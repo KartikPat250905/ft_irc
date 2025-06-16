@@ -5,7 +5,7 @@ INFILES =	Bureaucrat.cpp AForm.cpp ShrubberyCreationForm.cpp PresidentialPardonF
 
 OBJFILES = $(INFILES:.cpp=.o)
 
-NAME = Bureaucrat
+NAME = ircserv
 
 all: $(NAME)
 
