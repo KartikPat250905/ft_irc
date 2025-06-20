@@ -1,7 +1,8 @@
 C++ = c++
 STD = -std=c++23
 C++_FLAGS = -Wall -Wextra -Werror
-INFILES =	Bureaucrat.cpp AForm.cpp ShrubberyCreationForm.cpp PresidentialPardonForm.cpp RobotomyRequestForm.cpp main.cpp Intern.cpp
+INFILES = src/Server.cpp
+INCLUDES = -Iincludes -I/opt/homebrew/opt/readline/include
 
 OBJFILES = $(INFILES:.cpp=.o)
 
@@ -13,7 +14,7 @@ $(NAME):$(OBJFILES)
 	$(C++) $(STD) $(C++_FLAGS) $(OBJFILES) -o $(NAME)
 
 %.o: %.cpp
-	$(C++) $(STD) $(C++_FLAGS) -c $< -o $@
+	$(C++) $(STD) $(C++_FLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -f $(OBJFILES)
