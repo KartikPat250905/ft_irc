@@ -92,3 +92,62 @@ void Server::disconnetClient(int clientFd, const std::string& reason)
     FD_CLR(clientFd, &_readFds);
     _clients.erase(clientFd);
 }
+
+void Server::receiveClientMessage(int clientFd)
+{
+    char buffer[1024];
+    ssize_t bytes_read = recv(clientFd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_read <= 0)
+    {
+        disconnetClient(clientFd, "Read error or client closed the connection");
+        return ;
+    }
+    buffer[bytes_read] = '\0';
+    _clients[clientFd].appendToBuffer(buffer);
+    processClientBuffer(clientFd);
+}
+
+void Server::processClientBuffer(int clientFd)
+{
+    std::string& buf = _clients[clientFd].getBuffer();
+    size_t position;
+    while((pos = buf.find('\r\n')) != std::string::npos)
+    {
+        std::string line = buf.substr(0, position);
+        buf.erase(0, position + 2);
+        handleCommand(clientFd, line);
+    }
+}
+
+void Server::handleCommand(int clientFd, const std::string& line)
+{
+    std::cout << "Received from " << clientFd << ": " << line << std::endl;
+    // TO DO: dispatch to command handlers (Person B's job)
+}
+
+Client& Server::getClient(int clientFd) {
+    return _clients[clientFd];
+}
+
+Channel& Server::getOrCreateChannel(const std::string& name) {
+    return _channels[name];
+}
+
+bool Server::nicknameExists(const std::string& nick)
+{
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second.getNickname() == nick)
+            return true;
+    }
+    return false;
+}
+
+void Server::cleanup()
+{
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+        close(it->first);
+    close(_serverSocket);
+    _clients.clear();
+    _channels.clear();
+}

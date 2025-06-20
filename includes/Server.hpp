@@ -29,8 +29,8 @@ class Server
         void receiveClientMessage(int clientFd);// Read from client, buffer input
         void processClientBuffer(int clientFd);// Split lines, call command handlers
         void handleCommand(int clientFd, const std::string& line);  // Route one full command
+        bool nicknameExists(const std::string& nick);
 };
 
 Client& getClient(int clientFd);// Return a reference to a client
 Channel& getOrCreateChannel(const std::string& name);// Return or create a channel
-bool nicknameExists(const std::string& nick);// Check for collisions
