@@ -12,6 +12,10 @@ Server::Server(int port, const std::string& password) : _port(port), _password(p
 {
 }
 
+Server::~Server()
+{
+}
+
 void Server::init()
 {
     _serverSocket = socket(AF_INET, SOCK_STREAM, 0);
